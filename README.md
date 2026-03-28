@@ -16,6 +16,38 @@ npm install
 npm run dev
 ```
 
+## Build desktop app (installer)
+
+Copy env and set backend URL first:
+
+```bash
+cp .env.example .env
+# edit .env -> VITE_SERVER_URL=https://<your-render-domain>
+```
+
+Build per platform:
+
+```bash
+# current platform default
+npm run dist
+
+# specific targets
+npm run dist:win
+npm run dist:mac
+npm run dist:linux
+```
+
+Build artifacts are generated in `dist/`.
+
+## GitHub Actions release pipeline
+
+- Workflow file: [desktop-release.yml](/home/hefxpzwk/dev/jjappattu/jjappattu-frontend/.github/workflows/desktop-release.yml)
+- Trigger:
+  - `workflow_dispatch`: run manually with `backend_url` input
+  - `git tag vX.Y.Z && git push origin vX.Y.Z`: builds Linux/Windows/macOS and publishes GitHub Release assets
+- For tag builds, set repository variable:
+  - `RENDER_BACKEND_URL=https://<your-render-domain>`
+
 ## Environment
 
 - `VITE_SERVER_URL` (optional): Socket.io server URL (default `http://localhost:3000`)

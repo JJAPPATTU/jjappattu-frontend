@@ -1,0 +1,81 @@
+name: Desktop Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      backend_url:
+        description: "Socket backend URL (Render). Example: https://jjappattu-backend.onrender.com"
+        required: true
+        type: string
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            dist_script: dist:linux
+            artifact_name: desktop-linux
+          - os: windows-latest
+            dist_script: dist:win
+            artifact_name: desktop-windows
+          - os: macos-latest
+            dist_script: dist:mac
+            artifact_name: desktop-macos
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve backend URL
+        shell: bash
+        run: |
+          URL="${{ github.event.inputs.backend_url || vars.RENDER_BACKEND_URL }}"
+          if [ -z "$URL" ]; then
+            echo "backend_url input (workflow_dispatch) or RENDER_BACKEND_URL repository variable is required"
+            exit 1
+          fi
+          echo "VITE_SERVER_URL=$URL" >> "$GITHUB_ENV"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build desktop artifact
+        run: npm run ${{ matrix.dist_script }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: dist/*
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true

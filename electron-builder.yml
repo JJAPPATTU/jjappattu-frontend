@@ -1,0 +1,21 @@
+appId: com.jjappattu.desktop
+productName: JJAPPATTU
+artifactName: "${productName}-${version}-${os}-${arch}.${ext}"
+directories:
+  output: dist
+files:
+  - electron-app/**
+  - package.json
+extraMetadata:
+  main: electron-app/main/index.js
+asar: true
+mac:
+  category: public.app-category.games
+  target:
+    - dmg
+win:
+  target:
+    - nsis
+linux:
+  target:
+    - AppImage
