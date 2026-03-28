@@ -1,0 +1,30 @@
+{
+  "name": "jjappattu-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "main": "electron-app/main/index.js",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:renderer\" \"npm:dev:electron\"",
+    "dev:renderer": "cross-env CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=250 vite --config electron-app/renderer/vite.config.cjs",
+    "dev:electron": "wait-on tcp:5173 && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron . --no-sandbox",
+    "build": "npm run build:renderer",
+    "build:renderer": "vite build --config electron-app/renderer/vite.config.cjs",
+    "preview": "vite preview --config electron-app/renderer/vite.config.cjs"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "socket.io-client": "^4.8.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.1",
+    "cross-env": "^7.0.3",
+    "electron": "^37.2.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "vite": "^5.4.19",
+    "wait-on": "^8.0.3"
+  }
+}
