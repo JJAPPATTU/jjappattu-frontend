@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -66,13 +67,163 @@ body {
 
 .landing-title {
   opacity: 0;
-  animation: title-entrance 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  font-family: 'Press Start 2P', 'Rajdhani', monospace;
+  letter-spacing: 0.18em;
+  animation:
+    title-entrance 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    title-glitch 2.1s steps(2, end) 1.05s infinite;
+}
+
+.landing-stage {
+  overflow: hidden;
+}
+
+.landing-event-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.24), transparent 52%),
+    radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.16), transparent 62%);
+  animation: stage-flash 1.25s ease-out forwards;
+}
+
+.landing-event-bg::before,
+.landing-event-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.landing-event-bg::before {
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.14) 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 62%
+  );
+  transform: translateX(-120%);
+  animation: stage-sweep 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
+}
+
+.landing-event-bg::after {
+  background: radial-gradient(circle at 50% 45%, rgba(34, 211, 238, 0.2), transparent 60%);
+  opacity: 0;
+  animation: stage-pulse 1.6s ease-out 0.05s forwards;
 }
 
 .landing-button {
   opacity: 0;
+  font-family: 'Press Start 2P', 'Rajdhani', monospace;
   transform: translateY(24px);
-  animation: button-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.9s forwards;
+  animation:
+    button-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.9s forwards,
+    button-flicker 1.8s steps(2, end) 1.7s infinite;
+}
+
+.landing-static,
+.landing-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.landing-static {
+  opacity: 0.14;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(circle at 12% 20%, rgba(255, 255, 255, 0.2) 0 1px, transparent 1px),
+    radial-gradient(circle at 72% 64%, rgba(255, 255, 255, 0.18) 0 1px, transparent 1px),
+    radial-gradient(circle at 45% 80%, rgba(255, 255, 255, 0.13) 0 1px, transparent 1px);
+  background-size: 3px 3px, 4px 4px, 2px 2px;
+  animation: static-jitter 0.16s steps(2, end) infinite;
+}
+
+.landing-scanlines {
+  opacity: 0.18;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0px,
+    rgba(255, 255, 255, 0.08) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  animation: scanline-drift 5s linear infinite;
+}
+
+.arcade-text {
+  font-family: 'Press Start 2P', 'Rajdhani', monospace;
+  line-height: 1.45;
+}
+
+.command-stage {
+  overflow: hidden;
+}
+
+.command-nebula,
+.command-gridflow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.command-nebula {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(45, 212, 191, 0.26), transparent 44%),
+    radial-gradient(circle at 82% 24%, rgba(56, 189, 248, 0.19), transparent 42%),
+    radial-gradient(circle at 52% 84%, rgba(99, 102, 241, 0.22), transparent 48%);
+  filter: blur(0);
+  animation: nebula-shift 12s ease-in-out infinite alternate;
+}
+
+.command-gridflow {
+  opacity: 0.42;
+  background:
+    linear-gradient(rgba(56, 189, 248, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.14) 1px, transparent 1px);
+  background-size: 56px 56px;
+  transform-origin: center;
+  animation: grid-drift 9s linear infinite;
+}
+
+.command-gridflow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.18) 45%, transparent 65%);
+  transform: translateX(-120%);
+  animation: sweep-beam 4.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.lobby-panel {
+  border: 1px solid rgba(56, 189, 248, 0.42);
+  background: linear-gradient(155deg, rgba(6, 12, 20, 0.95), rgba(8, 15, 24, 0.88));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 40px rgba(56, 189, 248, 0.12),
+    0 30px 60px rgba(0, 0, 0, 0.5);
+}
+
+.lobby-card,
+.lobby-stat-card {
+  border: 1px solid rgba(63, 63, 70, 0.8);
+  border-radius: 1rem;
+  background: linear-gradient(165deg, rgba(9, 14, 22, 0.78), rgba(10, 10, 14, 0.72));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.lobby-card {
+  padding: 1rem;
+}
+
+.lobby-stat-card {
+  padding: 0.85rem 1rem;
 }
 
 @keyframes title-entrance {
@@ -107,9 +258,169 @@ body {
   }
 }
 
+@keyframes title-glitch {
+  0%,
+  86%,
+  100% {
+    transform: translateX(0);
+    text-shadow:
+      0 0 14px rgba(34, 211, 238, 0.2),
+      0 0 2px rgba(255, 255, 255, 0.3);
+  }
+  88% {
+    transform: translateX(-2px);
+    text-shadow:
+      2px 0 rgba(239, 68, 68, 0.65),
+      -2px 0 rgba(34, 211, 238, 0.65);
+  }
+  92% {
+    transform: translateX(2px);
+    text-shadow:
+      -2px 0 rgba(239, 68, 68, 0.65),
+      2px 0 rgba(34, 211, 238, 0.65);
+  }
+}
+
+@keyframes button-flicker {
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.45;
+  }
+  95% {
+    opacity: 0.95;
+  }
+  97% {
+    opacity: 0.52;
+  }
+}
+
+@keyframes stage-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+}
+
+@keyframes stage-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+@keyframes stage-pulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  45% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes static-jitter {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0.1;
+  }
+  25% {
+    transform: translate(-1px, 1px);
+    opacity: 0.16;
+  }
+  50% {
+    transform: translate(1px, -1px);
+    opacity: 0.12;
+  }
+  75% {
+    transform: translate(-1px, -1px);
+    opacity: 0.18;
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.1;
+  }
+}
+
+@keyframes scanline-drift {
+  from {
+    background-position-y: 0;
+  }
+  to {
+    background-position-y: 12px;
+  }
+}
+
+@keyframes nebula-shift {
+  0% {
+    transform: translate3d(-1%, -1%, 0) scale(1);
+    opacity: 0.72;
+  }
+  100% {
+    transform: translate3d(1%, 1%, 0) scale(1.04);
+    opacity: 0.95;
+  }
+}
+
+@keyframes grid-drift {
+  from {
+    transform: perspective(840px) rotateX(60deg) translateY(8%);
+    background-position: 0 0, 0 0;
+  }
+  to {
+    transform: perspective(840px) rotateX(60deg) translateY(12%);
+    background-position: 0 56px, 56px 0;
+  }
+}
+
+@keyframes sweep-beam {
+  0% {
+    opacity: 0;
+    transform: translateX(-130%);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(130%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .landing-static,
+  .landing-scanlines,
+  .landing-event-bg,
+  .landing-event-bg::before,
+  .landing-event-bg::after,
   .landing-title,
-  .landing-button {
+  .landing-button,
+  .command-nebula,
+  .command-gridflow,
+  .command-gridflow::before {
     animation: none;
     opacity: 1;
     transform: none;
