@@ -2,6 +2,13 @@
 
 Electron + React client that deletes random files in the selected workspace when server sends a losing result.
 
+## Local data model
+
+- This client treats one computer as one user.
+- It creates and stores a device-local `playerId` in browser local storage.
+- Friends and match history are also stored locally on that machine only.
+- Server remains authoritative for real-time match outcomes.
+
 ## Run
 
 ```bash

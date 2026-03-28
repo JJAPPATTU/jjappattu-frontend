@@ -28,11 +28,14 @@ function buildConnectionError(err) {
   return message;
 }
 
-export function createGameSocket({ onConnect, onDisconnect, onLose, onError, onStatus }) {
+export function createGameSocket({ playerId, onConnect, onDisconnect, onLose, onMatchResult, onError, onStatus }) {
   socket = io(SERVER_URL, {
     path: SOCKET_PATH,
     timeout: SOCKET_TIMEOUT_MS,
     transports: ['websocket'],
+    auth: {
+      playerId,
+    },
     reconnection: true,
     reconnectionDelay: 1200,
     reconnectionDelayMax: 6000,
@@ -58,7 +61,8 @@ export function createGameSocket({ onConnect, onDisconnect, onLose, onError, onS
     onStatus?.({ type: 'reconnect_attempt', detail: `attempt ${attempt}` });
   });
 
-  socket.on('game_result', (data) => {
+  socket.on('match_result', (data) => {
+    onMatchResult?.(data);
     if (data?.result === 'LOSE') {
       onLose?.(data);
     }

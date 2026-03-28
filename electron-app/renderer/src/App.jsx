@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fileService } from './services.file';
+import { localStateService } from './services.local-state';
 import { createGameSocket, closeGameSocket, getSocketConfig } from './services.socket';
 
 const DEFAULT_SETTINGS = {
@@ -22,6 +23,8 @@ function pickRandom(files, count) {
 
 function App() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [localProfile, setLocalProfile] = useState(() => localStateService.getProfile());
+  const [friendDraft, setFriendDraft] = useState('');
   const [files, setFiles] = useState([]);
   const [screen, setScreen] = useState('setup');
   const [connected, setConnected] = useState(false);
@@ -210,6 +213,22 @@ function App() {
     await refreshFiles();
   }
 
+  function onAddLocalFriend() {
+    const next = localStateService.addFriend(friendDraft);
+    setLocalProfile(next);
+    setFriendDraft('');
+  }
+
+  function onRemoveLocalFriend(friendPlayerId) {
+    const next = localStateService.removeFriend(friendPlayerId);
+    setLocalProfile(next);
+  }
+
+  function onMatchResult(payload) {
+    const next = localStateService.recordMatch(payload);
+    setLocalProfile(next);
+  }
+
   function startGame() {
     if (!isNetworkOnline) {
       setError('Network is offline. Please reconnect and try again.');
@@ -223,11 +242,13 @@ function App() {
     closeGameSocket();
 
     createGameSocket({
+      playerId: localProfile.devicePlayerId,
       onConnect: () => {
         setConnected(true);
         setError('');
       },
       onDisconnect: () => setConnected(false),
+      onMatchResult,
       onLose: () => runPunishment(PUNISHMENT_COUNT),
       onError: (message) => setError(message || 'Socket connection failed'),
       onStatus: ({ type, detail }) => setSocketStatus(`${type}${detail ? `: ${detail}` : ''}`),
@@ -442,7 +463,53 @@ function App() {
           <p className="mt-2 break-all">URL: {socketConfig.serverUrl}</p>
           <p className="break-all">PATH: {socketConfig.path}</p>
           <p>TIMEOUT: {socketConfig.timeoutMs}ms</p>
+          <p className="break-all">PLAYER ID: {localProfile.devicePlayerId}</p>
           <p className="mt-1 text-cyan-200">STATUS: {socketStatus || 'idle'}</p>
+        </div>
+
+        <div className="mt-3 rounded-2xl border border-zinc-700/80 bg-zinc-950/50 p-4">
+          <p className="text-xs font-semibold tracking-[0.08em] text-zinc-300">LOCAL PROFILE (THIS DEVICE ONLY)</p>
+          <p className="mt-2 text-sm text-zinc-300">Wins: {localProfile.totalWins} | Losses: {localProfile.totalLosses}</p>
+
+          <div className="mt-4 flex gap-2">
+            <input
+              value={friendDraft}
+              onChange={(event) => setFriendDraft(event.target.value)}
+              placeholder="Add friend/player ID locally"
+              className="flex-1 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-cyan-500"
+            />
+            <button
+              onClick={onAddLocalFriend}
+              className="rounded-lg border border-cyan-500/60 bg-cyan-500/10 px-3 py-2 text-xs font-semibold tracking-[0.08em] text-cyan-200 transition hover:bg-cyan-500/20"
+            >
+              ADD
+            </button>
+          </div>
+
+          <ul className="mt-3 max-h-28 overflow-auto rounded-lg border border-zinc-800 bg-black/30 p-2 text-sm text-zinc-200">
+            {localProfile.friends.map((friendId) => (
+              <li key={friendId} className="mb-1 flex items-center justify-between gap-2 rounded bg-zinc-900/60 px-2 py-1">
+                <span className="truncate">{friendId}</span>
+                <button
+                  onClick={() => onRemoveLocalFriend(friendId)}
+                  className="rounded border border-zinc-600 px-2 py-0.5 text-[10px] tracking-[0.08em] text-zinc-300 hover:border-red-400 hover:text-red-200"
+                >
+                  REMOVE
+                </button>
+              </li>
+            ))}
+            {localProfile.friends.length === 0 && <li className="text-zinc-500">No local friends saved.</li>}
+          </ul>
+
+          <p className="mt-4 text-xs font-semibold tracking-[0.08em] text-zinc-300">RECENT LOCAL MATCHES</p>
+          <ul className="mt-2 max-h-32 overflow-auto rounded-lg border border-zinc-800 bg-black/30 p-2 text-xs text-zinc-200">
+            {localProfile.matchHistory.map((item, index) => (
+              <li key={`${item.roomId}-${item.at}-${index}`} className="mb-1 rounded bg-zinc-900/60 px-2 py-1">
+                [{item.result}] room: {item.roomId || '-'} | reason: {item.reason} | {new Date(item.at).toLocaleString()}
+              </li>
+            ))}
+            {localProfile.matchHistory.length === 0 && <li className="text-zinc-500">No local match history yet.</li>}
+          </ul>
         </div>
 
         <div className="mt-6 grid gap-3 md:grid-cols-2">
