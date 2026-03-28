@@ -111,11 +111,11 @@ function App() {
   function renderSetup() {
     if (!workspaceSelectedThisSession) {
       return (
-        <div className="flex flex-col items-center justify-center">
-          <h1 className="mb-8 text-3xl font-extrabold tracking-[0.24em] text-zinc-100 md:text-5xl">JJAPPATTU</h1>
+        <div className="flex w-full flex-col items-center justify-center text-center">
+          <h1 className="landing-title mb-8 text-3xl font-black tracking-[0.24em] text-zinc-100 md:text-5xl">JJAPPATTU</h1>
           <button
             onClick={onSelectWorkspace}
-            className="rounded-xl border border-cyan-500/60 bg-cyan-500/10 px-7 py-3 text-sm font-bold tracking-[0.14em] text-cyan-200 transition hover:bg-cyan-500/20"
+            className="landing-button rounded-xl border border-cyan-500/60 bg-cyan-500/10 px-7 py-3 text-sm font-extrabold tracking-[0.14em] text-cyan-200 transition hover:bg-cyan-500/20"
           >
             폴더 선택
           </button>
