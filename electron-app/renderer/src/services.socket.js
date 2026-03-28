@@ -1,6 +1,9 @@
 import { io } from 'socket.io-client';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://127.0.0.1:3000';
+const DEFAULT_SERVER_URL = import.meta.env.DEV
+  ? 'http://127.0.0.1:3000'
+  : 'https://jjappattu-backend.onrender.com';
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || DEFAULT_SERVER_URL;
 const SOCKET_PATH = import.meta.env.VITE_SOCKET_PATH || '/socket.io';
 const SOCKET_TIMEOUT_MS = Number(import.meta.env.VITE_SOCKET_TIMEOUT_MS || 5000);
 
