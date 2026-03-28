@@ -268,6 +268,51 @@ body {
   animation: sweep-beam 4.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
+.arena-stage {
+  overflow: hidden;
+}
+
+.arena-aurora,
+.arena-sweep,
+.arena-flow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.arena-aurora {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(34, 211, 238, 0.2), transparent 46%),
+    radial-gradient(circle at 78% 20%, rgba(251, 191, 36, 0.16), transparent 44%),
+    radial-gradient(circle at 50% 86%, rgba(239, 68, 68, 0.16), transparent 46%);
+  animation: arena-breathe 14s ease-in-out infinite;
+}
+
+.arena-sweep {
+  opacity: 0.34;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 34%, rgba(56, 189, 248, 0.12) 60%, transparent 100%),
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.035) 0px,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+  animation: arena-scan 7.2s linear infinite;
+}
+
+.arena-flow {
+  opacity: 0.28;
+  background:
+    radial-gradient(circle at 20% 70%, rgba(34, 211, 238, 0.3), transparent 28%),
+    radial-gradient(circle at 76% 30%, rgba(239, 68, 68, 0.24), transparent 30%),
+    radial-gradient(circle at 52% 48%, rgba(251, 191, 36, 0.16), transparent 34%);
+  mix-blend-mode: screen;
+  animation: arena-flow-move 18s linear infinite;
+}
+
 @keyframes title-entrance {
   0% {
     opacity: 0;
@@ -452,6 +497,58 @@ body {
   }
 }
 
+@keyframes arena-breathe {
+  0% {
+    transform: translate3d(-1%, -1%, 0) scale(1);
+    filter: saturate(1);
+    opacity: 0.66;
+  }
+  50% {
+    transform: translate3d(1.5%, 0.8%, 0) scale(1.04);
+    filter: saturate(1.25);
+    opacity: 0.92;
+  }
+  100% {
+    transform: translate3d(1%, 1%, 0) scale(1.06);
+    filter: saturate(1.05);
+    opacity: 0.74;
+  }
+}
+
+@keyframes arena-scan {
+  from {
+    transform: translateY(0);
+    background-position: 0 0, 0 0;
+  }
+  to {
+    transform: translateY(-8px);
+    background-position: 0 0, 0 28px;
+  }
+}
+
+@keyframes arena-flow-move {
+  0% {
+    transform: translate3d(-2%, 0, 0) scale(1);
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    transform: translate3d(1.5%, -1.5%, 0) scale(1.05);
+    filter: hue-rotate(8deg);
+  }
+  50% {
+    transform: translate3d(2%, 1%, 0) scale(1.08);
+    filter: hue-rotate(0deg);
+  }
+  75% {
+    transform: translate3d(-1%, 1.5%, 0) scale(1.04);
+    filter: hue-rotate(-8deg);
+  }
+  100% {
+    transform: translate3d(-2%, 0, 0) scale(1);
+    filter: hue-rotate(0deg);
+  }
+}
+
 @keyframes lobby-entry {
   from {
     opacity: 0;
@@ -564,6 +661,9 @@ body {
   .command-nebula,
   .command-gridflow,
   .command-gridflow::before,
+  .arena-aurora,
+  .arena-sweep,
+  .arena-flow,
   .entry-anim,
   .lobby-glitch,
   .status-boot,
